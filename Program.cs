@@ -1,21 +1,31 @@
 ﻿public class Item
 {
-    private readonly string _name;
+    public string name
+    {
+        get;
+    }
     private int quantity;
     private DateTime createdDate;
 
-    public string Name
-    {
-        get
-        {
-            return _name;
-        }
 
-    }
     public int Quantity
     {
         get { return quantity; }
-        set { quantity = value; }
+        set
+        {
+            try
+            {
+                if (value >= 0)
+                    quantity = value;
+                else
+                    throw new ArgumentException("Quantity cannot be negative.");
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+        }
     }
 
     public DateTime CreatedDate
@@ -24,67 +34,111 @@
         set { createdDate = value; }
     }
 
-    public Item(string _name, int quantity, DateTime createdDate = default)
+    public Item(string name, int quantity, DateTime createdDate = default)
     {
-        this._name = _name;
+
+
+        if (quantity < 0)
+        {
+            throw new ArgumentException("Quantity cannot be negative.");
+        }
+        this.name = name;
         this.quantity = quantity;
-        this.createdDate = createdDate;
+        this.createdDate = createdDate == default ? DateTime.Now : createdDate;
+
+
     }
 
     public override string ToString()
     {
-        return $"{_name} - {quantity} - {createdDate}";
+        return $"{name} - {quantity} - {createdDate}";
     }
 }
 
 public class Store
 {
     private List<Item> items = new List<Item>();
+    private int MaximumCapacity;
 
- 
+
+    public Store(int MaximumCapacity)
+    {
+        this.MaximumCapacity = MaximumCapacity;
+        items = new List<Item>();
+    }
+
+
 
     public void AddItem(Item item)
     {
-        bool isItemExist = items.Any((i) => i.Name == item.Name);
+        bool isItemExist = items.Any((i) => i.name == item.name);
         if (isItemExist)
         {
-            Console.WriteLine($"Item {item.Name} already exist");
-            return;
+            throw new ArgumentException($"Item {item.name} already exists.");
+
         }
+        if (GetCurrentVolume() > MaximumCapacity)
+        {
+            throw new InvalidOperationException("Maximum Capcity");
+
+        }
+
         items.Add(item);
+
+
     }
 
-    public void PrintItems(){
-        foreach(var item in items){
+    public void PrintItems()
+    {
+        foreach (var item in items)
+        {
             Console.WriteLine($"{item}");
         }
 
     }
 
-    public bool RemoveItemByName(string itemName)
+    public void RemoveItemByName(string itemName)
     {
-         Item itemToRemove = items.FirstOrDefault(i => i.Name == itemName);
+        Item itemToRemove = items.FirstOrDefault(i => i.name == itemName);
         if (itemToRemove != null)
         {
             items.Remove(itemToRemove);
-            Console.WriteLine($"Item {itemName} removed successfully");
-            return true;
+            throw new ArgumentException($"Item {itemName} removed successfully");
+
+
         }
         else
         {
-            Console.WriteLine($"Item {itemName} not found");
-            return false;
+            throw new ArgumentException($"Item '{itemName}' not found.");
+
+
         }
+    }
+
+    public int GetCurrentVolume()
+    {
+
+        return items.Sum(item => item.Quantity);
+    }
+
+    public Item FindItemByName(string itemName)
+    {
+        // find the item 
+        Item itemFound = items.FirstOrDefault(i => i.name == itemName);
+        return itemFound;
+
+
+    }
+
+    public List<Item> SortByNameAsc()
+    {
+        return items.OrderBy(i => i.name).ToList();
     }
 
 
 
+
 }
-
-
-
-
-
 
 
 public class MyClass
@@ -92,65 +146,60 @@ public class MyClass
     public static void Main(string[] args)
     {
 
+        try
+        {
+            var waterBottle1 = new Item("Water Bottle 1", 10, new DateTime(2023, 1, 1));
+            var waterBottle2 = new Item("Water Bottle 2", 5, new DateTime(2023, 1, 1));
+            var coffee = new Item("Coffee", 20);
+            var sandwich = new Item("Sandwich", 15);
+            var batteries = new Item("Batteries", 10);
+            var umbrella = new Item("Umbrella", 5);
+            var sunscreen = new Item("Sunscreen", 8);
+
+            var store = new Store(100);
 
 
-        var waterBottle1 = new Item("Water Bottle 1", 10, new DateTime(2023, 1, 1));
-        var waterBottle2 = new Item("Water Bottle 2", 5, new DateTime(2023, 1, 1));
-        var coffee = new Item("Coffee", 20);
-        var sandwich = new Item("Sandwich", 15);
-        var batteries = new Item("Batteries", 10);
-        var umbrella = new Item("Umbrella", 5);
-        var sunscreen = new Item("Sunscreen", 8);
-
-
-        // Console.WriteLine($"{waterBottle1}");
-        // Console.WriteLine($"{coffee}");
-
-
-
-        var store = new Store();
-        store.AddItem(waterBottle1);
-        store.AddItem(waterBottle2);
-        store.AddItem(coffee);
-        store.AddItem(sandwich);
-        store.AddItem(batteries);
-        store.AddItem(umbrella);
-        store.AddItem(sunscreen);
-
-      
-
-       store.PrintItems();
-       Console.WriteLine("--------------------------");
-       store.RemoveItemByName("Coffee");
-       // print items after removing
-       store.PrintItems();
-
-        // store.DeleteItem("Water Bottle");
-
-        // Console.WriteLine($"{store.GetCurrentVolume()}");
-
-        // Console.WriteLine(store.FindItemByName("Coffee"));
-
-        // Console.WriteLine("------------------------");
-
-        // var collections = store.SortByNameAsc();
-        // foreach (var item in collections)
-        // {
-        //     Console.WriteLine($"{item}");
-
-        // }
+            store.AddItem(waterBottle1);
+            store.AddItem(waterBottle2);
+            store.AddItem(coffee);
+            store.AddItem(sandwich);
+            store.AddItem(batteries);
+            store.AddItem(umbrella);
+            store.AddItem(sunscreen);
 
 
 
 
+            // store.PrintItems();
+            // Console.WriteLine("--------------------------");
+            //  store.RemoveItemByName("Coffee");
+
+
+            Console.WriteLine($"{store.GetCurrentVolume()}");
+
+            Console.WriteLine(store.FindItemByName("Coffee"));
+
+
+            var collections = store.SortByNameAsc();
+            foreach (var item in collections)
+            {
+                Console.WriteLine($"{item}");
+
+            }
+
+        }
+        catch (ArgumentException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine(e.Message);
+        }
 
 
 
 
-        // List<int> numbers = new List<int>{1, 2, 3, 4, 5, 6, 7};
-
-        // int firstGreaterThanFour = numbers.FirstOrDefault(num => num > 4);
-        // Console.WriteLine($"{firstGreaterThanFour}");
 
 
 
