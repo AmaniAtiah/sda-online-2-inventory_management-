@@ -1,181 +1,4 @@
-﻿public class Item
-{
-    public string name
-    {
-        get;
-    }
-    private int quantity;
-    private DateTime createdDate;
-
-
-    public int Quantity
-    {
-        get { return quantity; }
-        set
-        {
-
-            quantity = value;
-
-
-
-        }
-    }
-
-    public DateTime CreatedDate
-    {
-        get { return createdDate; }
-        set { createdDate = value; }
-    }
-
-    public Item(string name, int quantity, DateTime createdDate = default)
-    {
-        try
-        {
-            if (quantity < 0)
-            {
-                throw new ArgumentException("Quantity cannot be negative.");
-            }
-
-            this.name = name;
-            this.quantity = quantity;
-            this.createdDate = createdDate == default ? DateTime.Now : createdDate;
-
-        }
-        catch (ArgumentException e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-
-    }
-
-    public override string ToString()
-    {
-        return $"{name} - {quantity} - {createdDate}";
-    }
-}
-
-public class Store
-{
-    public enum SortOrder
-    {
-        ASC,
-        DESC
-    }
-
-    private List<Item> items = new List<Item>();
-    private int MaximumCapacity;
-
-
-    public Store(int MaximumCapacity)
-    {
-        this.MaximumCapacity = MaximumCapacity;
-        items = new List<Item>();
-    }
-
-
-
-    public void AddItem(Item item)
-    {
-        bool isItemExist = items.Any((i) => i.name == item.name);
-        try
-        {
-            if (isItemExist)
-            {
-                throw new ArgumentException($"Item {item.name} already exists.");
-
-            }
-            if (GetCurrentVolume() + item.Quantity > MaximumCapacity)
-            {
-                throw new InvalidOperationException("Maximum Capcity");
-
-            }
-
-            items.Add(item);
-        }
-        catch (ArgumentException e)
-        {
-            Console.WriteLine(e.Message);
-
-        }
-
-
-    }
-
-    public void PrintItems()
-    {
-        foreach (var item in items)
-        {
-            Console.WriteLine($"{item}");
-        }
-
-    }
-
-    public void RemoveItemByName(string itemName)
-    {
-        try
-        {
-            Item itemToRemove = items.FirstOrDefault(i => i.name == itemName);
-            if (itemToRemove != null)
-            {
-                items.Remove(itemToRemove);
-                Console.WriteLine($"Item {itemName} removed.");
-
-
-            }
-            else
-            {
-                throw new ArgumentException($"Item {itemName}  not found.");
-
-            }
-        }
-        catch (ArgumentException e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-    }
-
-
-    public int GetCurrentVolume()
-    {
-
-        return items.Sum(item => item.Quantity);
-    }
-
-    public Item FindItemByName(string itemName)
-    {
-        Item itemFound = items.FirstOrDefault(i => i.name == itemName);
-        return itemFound;
-
-    }
-
-    public List<Item> SortByNameAsc()
-    {
-        return items.OrderBy(i => i.name).ToList();
-    }
-
-    public List<Item> SortByDate(SortOrder sortOrder)
-    {
-        switch (sortOrder)
-        {
-            case SortOrder.ASC:
-                return items.OrderBy(i => i.CreatedDate).ToList();
-            case SortOrder.DESC:
-                return items.OrderByDescending(i => i.CreatedDate).ToList();
-
-            default:
-                return items.OrderBy(i => i.CreatedDate).ToList();
-        }
-
-
-    }
-
-   
-
-
-
-}
+﻿
 
 
 public class MyClass
@@ -184,78 +7,108 @@ public class MyClass
     {
 
 
-        var waterBottle1 = new Item("Water Bottle 1", 10, new DateTime(2023, 1, 1));
-        var waterBottle2 = new Item("Water Bottle 2", 5, new DateTime(2023, 1, 1));
+        var waterBottle = new Item("Water Bottle", 10, new DateTime(2023, 1, 1));
+        var chocolateBar = new Item("Chocolate Bar", 15, new DateTime(2023, 2, 1));
+        var notebook = new Item("Notebook", 5, new DateTime(2023, 3, 1));
+        var pen = new Item("Pen", 20, new DateTime(2023, 4, 1));
+        var tissuePack = new Item("Tissue Pack", 30, new DateTime(2023, 5, 1));
+        var chipsBag = new Item("Chips Bag", 25, new DateTime(2023, 6, 1));
+        var sodaCan = new Item("Soda Can", 8, new DateTime(2023, 7, 1));
+        var soap = new Item("Soap", 12, new DateTime(2023, 8, 1));
+        var shampoo = new Item("Shampoo", 40, new DateTime(2023, 9, 1));
+        var toothbrush = new Item("Toothbrush", 50, new DateTime(2023, 10, 1));
         var coffee = new Item("Coffee", 20);
-        var sandwich = new Item("Sandwich", -15);
+        var sandwich = new Item("Sandwich", 15);
         var batteries = new Item("Batteries", 10);
         var umbrella = new Item("Umbrella", 5);
         var sunscreen = new Item("Sunscreen", 8);
 
+        var store = new Store(250);
 
-        var store = new Store(100);
-
-
-        store.AddItem(waterBottle1);
-        store.AddItem(waterBottle2);
+        // Add Item To Store
+        store.AddItem(waterBottle);
+        store.AddItem(chocolateBar);
+        store.AddItem(notebook);
+        store.AddItem(pen);
+        store.AddItem(tissuePack);
+        store.AddItem(chipsBag);
+        store.AddItem(sodaCan);
+        store.AddItem(soap);
+        store.AddItem(shampoo);
+        store.AddItem(toothbrush);
         store.AddItem(coffee);
         store.AddItem(sandwich);
         store.AddItem(batteries);
         store.AddItem(umbrella);
         store.AddItem(sunscreen);
-        store.AddItem(sunscreen);
 
+        // Print Items
+        store.PrintItems();
+        Console.WriteLine("--------------------------");
 
-
-
-
-        // store.PrintItems();
-        // Console.WriteLine("--------------------------");
-        //  store.RemoveItemByName("Coffee");
-
+        // Delete Selected Items By Name
+        store.RemoveItemByName("Water Bottle");
+        Console.WriteLine("--------------------------");
 
         Console.WriteLine($"{store.GetCurrentVolume()}");
+        Console.WriteLine("--------------------------");
 
-        Console.WriteLine(store.FindItemByName("Coffee"));
+        // search item by name
+        var itemName = "Chocolate Bar";
+        Item foundItem = store.FindItemByName(itemName);
+        if (foundItem != null)
+        {
+            Console.WriteLine($"Found item: {foundItem.Name}, Created Date: {foundItem.CreatedDate.ToShortDateString()}");
+        }
+        else
+        {
+            Console.WriteLine($"Item with name '{itemName}' not found.");
+        }
+
+        Console.WriteLine("--------------------------");
 
 
+        // sort by name 
+        Console.WriteLine("Sort By name Ascendeing");
         var collections = store.SortByNameAsc();
         foreach (var item in collections)
         {
             Console.WriteLine($"{item}");
 
         }
+        Console.WriteLine("--------------------------");
+
+        // print item after sorted asc
+        Console.WriteLine("Items sorted in ascending order:");
+        var sortedItemsAsc = store.SortByDate(Store.SortOrder.ASC);
+        foreach (var item in sortedItemsAsc)
+        {
+            Console.WriteLine($"{item}");
+        }
 
         Console.WriteLine("--------------------------");
 
-       
-
-
-        var collectionSortedByDateAsc = store.SortByDate(Store.SortOrder.ASC);
-       
-
-        foreach (var item in collectionSortedByDateAsc)
+        // print item after sorted desc
+        Console.WriteLine("\nItems sorted in descending order:");
+        var sortedItemsDesc = store.SortByDate(Store.SortOrder.DESC);
+        foreach (var item in sortedItemsDesc)
         {
             Console.WriteLine($"{item}");
         }
 
-                Console.WriteLine("--------------------------");
+        Console.WriteLine("--------------------------");
 
+        // group items for last three month and add to  in new arrival  
+        var groupByDate = store.GroupByDate();
 
-         var collectionSortedByDateDesc = store.SortByDate(Store.SortOrder.DESC);
-      
-
-        foreach (var item in collectionSortedByDateDesc)
+        foreach (var group in groupByDate)
         {
-            Console.WriteLine($"{item}");
+            Console.WriteLine($"{group.Key} Items:");
+            foreach (var item in group.Value)
+            {
+                Console.WriteLine($" - {item.Name}, Created: {item.CreatedDate.ToShortDateString()}");
+            }
         }
-
-
-
-
-      
-
-
 
 
 
