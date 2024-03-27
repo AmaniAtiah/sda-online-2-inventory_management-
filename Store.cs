@@ -87,7 +87,7 @@ public class Store
 
     public Item FindItemByName(string itemName)
     {
-        Item itemFound = items.FirstOrDefault(i => i.Name == itemName);
+        Item? itemFound = items.FirstOrDefault(i => i.Name == itemName);
         return itemFound;
     }
 
@@ -114,24 +114,24 @@ public class Store
         DateTime threeMonthsAgo = DateTime.Now.AddMonths(-3);
 
         Dictionary<string, List<Item>> groups = new Dictionary<string, List<Item>>();
-        List<Item> NewArrival = new List<Item>();
-        List<Item> Old = new List<Item>();
+        List<Item> newArrival = new List<Item>();
+        List<Item> old = new List<Item>();
 
         foreach (var item in items)
         {
             if (item.CreatedDate >= threeMonthsAgo)
             {
-                NewArrival.Add(item);
+                newArrival.Add(item);
             }
             else
             {
-                Old.Add(item);
+                old.Add(item);
             }
 
 
         }
-        groups.Add("New Arrival", NewArrival);
-        groups.Add("Old", Old);
+        groups.Add("New Arrival", newArrival);
+        groups.Add("Old", old);
 
         return groups;
     }

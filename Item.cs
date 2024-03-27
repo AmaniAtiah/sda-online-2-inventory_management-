@@ -24,8 +24,7 @@ public class Item
     public DateTime CreatedDate
     {
         get { return createdDate; }
-        set { createdDate = value; }
-    }
+     }
 
     public Item(string name, int quantity, DateTime createdDate = default)
     {

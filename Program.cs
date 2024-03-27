@@ -1,12 +1,8 @@
 ﻿
-
-
 public class MyClass
 {
     public static void Main(string[] args)
     {
-
-
         var waterBottle = new Item("Water Bottle", 10, new DateTime(2023, 1, 1));
         var chocolateBar = new Item("Chocolate Bar", 15, new DateTime(2023, 2, 1));
         var notebook = new Item("Notebook", 5, new DateTime(2023, 3, 1));
@@ -74,7 +70,6 @@ public class MyClass
         foreach (var item in collections)
         {
             Console.WriteLine($"{item}");
-
         }
         Console.WriteLine("--------------------------");
 
@@ -110,13 +105,6 @@ public class MyClass
             }
         }
 
-
-
-
-
     }
-
-
-
 
 }
