@@ -20,7 +20,7 @@ public class Store
     {
         bool isItemExist = items.Any((i) => i.Name == item.Name);
         try
-        { 
+        {
             if (isItemExist)
             {
                 throw new ArgumentException($"Item {item.Name} already exists.");
@@ -38,7 +38,9 @@ public class Store
         {
             Console.WriteLine(e.Message);
 
-        } catch(InvalidOperationException e){
+        }
+        catch (InvalidOperationException e)
+        {
             Console.WriteLine(e.Message);
         }
 
@@ -85,7 +87,9 @@ public class Store
         return items.Sum(item => item.Quantity);
     }
 
-    public Item FindItemByName(string itemName)
+
+
+    public Item? FindItemByName(string itemName)
     {
         Item? itemFound = items.FirstOrDefault(i => i.Name == itemName);
         return itemFound;
@@ -99,7 +103,8 @@ public class Store
 
     public List<Item> SortByDate(SortOrder sortOrder)
     {
-        switch (sortOrder){
+        switch (sortOrder)
+        {
             case SortOrder.ASC:
                 return items.OrderBy(i => i.CreatedDate).ToList();
             case SortOrder.DESC:
